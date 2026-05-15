@@ -1,0 +1,92 @@
+%%{init: {'pageSize': 'A4', 'pageOrientation': 'landscape'}}%%
+flowchart LR
+    subgraph entity [backend/src/main/java/com/thuvien/entity]
+        Book["Book<br/>id, title, author, status, totalBorrows"]
+        Customer["Customer<br/>id, fullName, cardStatus, cardType"]
+        BorrowRecord["BorrowRecord<br/>id, borrowDate, dueDate, status, deposit, fine"]
+    end
+
+    subgraph dto [backend/src/main/java/com/thuvien/dto]
+        BookRequest["BookRequest<br/>title, author, genre, price, status"]
+        CustomerRequest["CustomerRequest<br/>fullName, phone, cccd, cardType"]
+        BorrowRequest["BorrowRequest<br/>items"]
+        BorrowItemRequest["BorrowItemRequest<br/>bookId, days"]
+        ReturnRequest["ReturnRequest<br/>recordIds"]
+        ExtendRequest["ExtendRequest<br/>recordId, additionalDays"]
+        RenewCardRequest["RenewCardRequest<br/>cardType"]
+        DeleteBooksRequest["DeleteBooksRequest<br/>ids"]
+        BookDTO["BookDTO<br/>id, title, genre, status, totalBorrows"]
+        CustomerDTO["CustomerDTO<br/>id, fullName, cardStatus, currentBorrowing"]
+        BorrowResultDTO["BorrowResultDTO<br/>customerId, recordIds"]
+        ReturnResultDTO["ReturnResultDTO<br/>totalFine, totalDeposit, netAmount"]
+        ReturnItemDTO["ReturnItemDTO<br/>bookId, overdueDays, fine, deposit"]
+        BookBorrowHistoryDTO["BookBorrowHistoryDTO<br/>customerId, borrowDate, fine"]
+        CustomerBorrowHistoryDTO["CustomerBorrowHistoryDTO<br/>bookId, borrowDate, fine"]
+        DashboardDTO["DashboardDTO<br/>totalBooks, activeBorrows, overdueCount"]
+        CustomerSummaryDTO["CustomerSummaryDTO<br/>customerId, borrowing, overdue"]
+        ActiveBorrowDTO["ActiveBorrowDTO<br/>bookTitle, customerName, dueDate"]
+        LoginRequest["LoginRequest<br/>username, password"]
+        LoginResponse["LoginResponse<br/>token, username"]
+    end
+
+    subgraph repository [backend/src/main/java/com/thuvien/repository]
+        BookRepository([BookRepository])
+        CustomerRepository([CustomerRepository])
+        BorrowRecordRepository([BorrowRecordRepository])
+    end
+
+    subgraph service [backend/src/main/java/com/thuvien/service]
+        BookService([BookService])
+        CustomerService([CustomerService])
+        DashboardService([DashboardService])
+        DataSeeder([DataSeeder])
+    end
+
+    subgraph controller [backend/src/main/java/com/thuvien/controller]
+        BookController([BookController])
+        CustomerController([CustomerController])
+        DashboardController([DashboardController])
+        AuthController([AuthController])
+    end
+
+    subgraph security [backend/src/main/java/com/thuvien/security]
+        JwtAuthFilter([JwtAuthFilter])
+        JwtUtil([JwtUtil])
+        SecurityConfig([SecurityConfig])
+    end
+
+    subgraph app [backend/src/main/java/com/thuvien]
+        ThuVienApplication([ThuVienApplication])
+    end
+
+    Book -- "1..*" --> BorrowRecord
+    Customer -- "1..*" --> BorrowRecord
+    BookService --> BookRepository
+    BookService --> BorrowRecordRepository
+    CustomerService --> CustomerRepository
+    CustomerService --> BookRepository
+    CustomerService --> BorrowRecordRepository
+    DashboardService --> BookRepository
+    DashboardService --> CustomerRepository
+    DashboardService --> BorrowRecordRepository
+    DataSeeder --> BookRepository
+    DataSeeder --> CustomerRepository
+    DataSeeder --> BorrowRecordRepository
+
+    BookController --> BookService
+    CustomerController --> CustomerService
+    DashboardController --> DashboardService
+    AuthController --> JwtUtil
+    AuthController --> SecurityConfig
+    JwtAuthFilter --> JwtUtil
+    JwtAuthFilter --> SecurityConfig
+    SecurityConfig --> JwtUtil
+    SecurityConfig --> JwtAuthFilter
+
+    style entity fill:#f8f9fa,stroke:#333,stroke-width:1px
+    style dto fill:#eef6ff,stroke:#333,stroke-width:1px
+    style repository fill:#eaf7df,stroke:#333,stroke-width:1px
+    style service fill:#fff3cd,stroke:#333,stroke-width:1px
+    style controller fill:#f8d7da,stroke:#333,stroke-width:1px
+    style security fill:#d1ecf1,stroke:#333,stroke-width:1px
+    style app fill:#d4edda,stroke:#333,stroke-width:1px
