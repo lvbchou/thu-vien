@@ -1,11 +1,9 @@
 /Users/chaulevubao/Documents/GR1/thu-vien/backend/src/main/java/com/thuvien/dto/BorrowResultDTO.java
 /Users/chaulevubao/Documents/GR1/thu-vien/backend/src/main/java/com/thuvien/dto/ExtendRequest.java
 /Users/chaulevubao/Documents/GR1/thu-vien/backend/src/main/java/com/thuvien/dto/ActiveBorrowDTO.java
-/Users/chaulevubao/Documents/GR1/thu-vien/backend/src/main/java/com/thuvien/security/JwtUtil.java
 /Users/chaulevubao/Documents/GR1/thu-vien/backend/src/main/java/com/thuvien/dto/DeleteBooksRequest.java
 /Users/chaulevubao/Documents/GR1/thu-vien/backend/src/main/java/com/thuvien/repository/CustomerRepository.java
 /Users/chaulevubao/Documents/GR1/thu-vien/backend/src/main/java/com/thuvien/dto/CustomerDTO.java
-/Users/chaulevubao/Documents/GR1/thu-vien/backend/src/main/java/com/thuvien/security/JwtAuthFilter.java
 /Users/chaulevubao/Documents/GR1/thu-vien/backend/src/main/java/com/thuvien/service/BookService.java
 /Users/chaulevubao/Documents/GR1/thu-vien/backend/src/main/java/com/thuvien/dto/CustomerSummaryDTO.java
 /Users/chaulevubao/Documents/GR1/thu-vien/backend/src/main/java/com/thuvien/repository/BookRepository.java
@@ -29,7 +27,6 @@
 /Users/chaulevubao/Documents/GR1/thu-vien/backend/src/main/java/com/thuvien/entity/Book.java
 /Users/chaulevubao/Documents/GR1/thu-vien/backend/src/main/java/com/thuvien/ThuVienApplication.java
 /Users/chaulevubao/Documents/GR1/thu-vien/backend/src/main/java/com/thuvien/repository/BorrowRecordRepository.java
-/Users/chaulevubao/Documents/GR1/thu-vien/backend/src/main/java/com/thuvien/controller/AuthController.java
 /Users/chaulevubao/Documents/GR1/thu-vien/backend/src/main/java/com/thuvien/config/SecurityConfig.java
 /Users/chaulevubao/Documents/GR1/thu-vien/backend/src/main/java/com/thuvien/dto/ReturnRequest.java
 /Users/chaulevubao/Documents/GR1/thu-vien/backend/src/main/java/com/thuvien/dto/DashboardDTO.java

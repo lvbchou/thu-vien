@@ -28,7 +28,6 @@ export default function BorrowModal({ customer, onDone, onClose }) {
   };
 
   const selectBook = (i, book) => {
-    // Check duplicate
     const alreadySelected = items.some((x, idx) => idx !== i && x.bookData?.id === book.id);
     if (alreadySelected) {
       alert(`Sách "${book.title}" đã được thêm vào danh sách!`);
