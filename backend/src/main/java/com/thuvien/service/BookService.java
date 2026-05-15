@@ -52,7 +52,7 @@ public class BookService {
         }
         return dtos;
     }
-
+    
     public BookDTO getBookById(String id) {
         Book book = bookRepository.findById(id).orElseThrow(() -> new RuntimeException("Book not found"));
         return toDTO(book);
@@ -64,12 +64,11 @@ public class BookService {
 
     @Transactional
     public BookDTO createBook(BookRequest req) {
-        // Auto-generate ID: S001, S002, ...
         String newId = generateBookId();
         Book book = new Book();
         book.setId(newId);
         mapToBook(book, req);
-        book.setId(newId); // ensure ID not overwritten by mapToBook
+        book.setId(newId);  
         return toDTO(bookRepository.save(book));
     }
 
@@ -133,7 +132,6 @@ public class BookService {
                 .collect(Collectors.toList());
     }
 
-    // Search books for borrow form
     public List<BookDTO> searchAvailableBooks(String keyword) {
         List<Book> books = bookRepository.findByTitleContainingIgnoreCaseOrIdContainingIgnoreCase(keyword, keyword);
         return books.stream()
@@ -143,7 +141,6 @@ public class BookService {
     }
 
     private void mapToBook(Book book, BookRequest req) {
-        // ID is set separately (auto-generated for create, fixed for update)
         book.setTitle(req.getTitle());
         book.setAuthor(req.getAuthor());
         book.setPublisher(req.getPublisher());

@@ -1,4 +1,5 @@
 package com.thuvien.controller;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.thuvien.dto.*;
@@ -16,9 +17,9 @@ public class BookController {
 
     @Autowired
 
-
     private BookService bookService;
 
+    // lấy danh sách Sách, tìm kiếm, lọc theo thể loại và sắp xếp
     @GetMapping
     public ResponseEntity<List<BookDTO>> getAll(
             @RequestParam(required = false) String search,
@@ -27,16 +28,20 @@ public class BookController {
         return ResponseEntity.ok(bookService.getAllBooks(search, genre, sort));
     }
 
+    // lấy danh sách các thể loại sách để Frontend render vào thẻ <select> hoặc
+    // dropdown list.
     @GetMapping("/genres")
     public ResponseEntity<List<String>> getGenres() {
         return ResponseEntity.ok(bookService.getAllGenres());
     }
 
+    // tìm kiếm riêng cho những sách còn trong kho để cho mượn
     @GetMapping("/search-available")
     public ResponseEntity<List<BookDTO>> searchAvailable(@RequestParam String keyword) {
         return ResponseEntity.ok(bookService.searchAvailableBooks(keyword));
     }
 
+    // crud: lấy chi tiết, thêm mới, Cập nhật 1 cuốn sách.
     @GetMapping("/{id}")
     public ResponseEntity<BookDTO> getById(@PathVariable String id) {
         return ResponseEntity.ok(bookService.getBookById(id));
@@ -58,12 +63,14 @@ public class BookController {
         return ResponseEntity.noContent().build();
     }
 
+    // xóa hàng loạt sách
     @DeleteMapping("/batch")
     public ResponseEntity<Void> deleteBatch(@RequestBody DeleteBooksRequest req) {
         bookService.deleteBooks(req.getIds());
         return ResponseEntity.noContent().build();
     }
 
+    // xem lịch sử mượn trả của 1 cuốn sách, lọc theo thời gian.
     @GetMapping("/{id}/borrow-history")
     public ResponseEntity<List<BookBorrowHistoryDTO>> getBorrowHistory(
             @PathVariable String id,

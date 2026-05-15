@@ -317,7 +317,7 @@ public class CustomerService {
     }
 
     private void mapToCustomer(Customer customer, CustomerRequest req) {
-        // ID is managed separately
+        
         customer.setFullName(req.getFullName());
         customer.setPhone(req.getPhone());
         customer.setCccd(req.getCccd());
