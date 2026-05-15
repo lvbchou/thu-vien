@@ -33,5 +33,4 @@ com/thuvien/service/CustomerService.class
 com/thuvien/dto/ReturnRequest.class
 com/thuvien/repository/BorrowRecordRepository.class
 com/thuvien/repository/BookRepository.class
-com/thuvien/config/DataSeeder.class
 com/thuvien/dto/BookRequest.class

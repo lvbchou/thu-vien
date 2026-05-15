@@ -9,7 +9,6 @@
 /Users/chaulevubao/Documents/GR1/thu-vien/backend/src/main/java/com/thuvien/repository/BookRepository.java
 /Users/chaulevubao/Documents/GR1/thu-vien/backend/src/main/java/com/thuvien/dto/BookDTO.java
 /Users/chaulevubao/Documents/GR1/thu-vien/backend/src/main/java/com/thuvien/controller/CustomerController.java
-/Users/chaulevubao/Documents/GR1/thu-vien/backend/src/main/java/com/thuvien/config/DataSeeder.java
 /Users/chaulevubao/Documents/GR1/thu-vien/backend/src/main/java/com/thuvien/dto/BookBorrowHistoryDTO.java
 /Users/chaulevubao/Documents/GR1/thu-vien/backend/src/main/java/com/thuvien/dto/BorrowRequest.java
 /Users/chaulevubao/Documents/GR1/thu-vien/backend/src/main/java/com/thuvien/dto/BorrowItemRequest.java
