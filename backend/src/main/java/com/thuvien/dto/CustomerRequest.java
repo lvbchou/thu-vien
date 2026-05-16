@@ -11,6 +11,7 @@ public class CustomerRequest {
     private Customer.CardType cardType;
     private LocalDate cardStartDate;
     private LocalDate cardExpireDate;
+    
     public String getId() { return id; }
     public void setId(String v) { this.id = v; }
     public String getFullName() { return fullName; }

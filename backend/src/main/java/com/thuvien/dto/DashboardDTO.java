@@ -4,6 +4,7 @@ public class DashboardDTO {
     private long activeBorrows;
     private long totalCustomers;
     private long overdueCount;
+    
     public long getTotalBooks() { return totalBooks; }
     public void setTotalBooks(long v) { this.totalBooks = v; }
     public long getActiveBorrows() { return activeBorrows; }

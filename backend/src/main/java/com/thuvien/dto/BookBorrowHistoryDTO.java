@@ -12,6 +12,7 @@ public class BookBorrowHistoryDTO {
     private int totalDays;
     private BigDecimal deposit;
     private BigDecimal fine;
+    
     public Long getRecordId() { return recordId; }
     public void setRecordId(Long v) { this.recordId = v; }
     public String getCustomerId() { return customerId; }

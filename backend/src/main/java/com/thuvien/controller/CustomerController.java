@@ -12,7 +12,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 //quản lý thông tin cá nhân, các nghiệp vụ thư viện: mượn, trả, gia hạn sách.
-
 @RestController
 @RequestMapping("/api/customers")
 public class CustomerController {

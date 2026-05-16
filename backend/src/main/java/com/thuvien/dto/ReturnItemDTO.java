@@ -7,6 +7,7 @@ public class ReturnItemDTO {
     private int overdueDays;
     private BigDecimal fine;
     private BigDecimal deposit;
+    
     public Long getRecordId() { return recordId; }
     public void setRecordId(Long v) { this.recordId = v; }
     public String getBookId() { return bookId; }

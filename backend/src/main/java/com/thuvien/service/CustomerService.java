@@ -36,7 +36,6 @@ public class CustomerService {
             customers = customerRepository.findByFullNameContainingIgnoreCaseOrIdContainingIgnoreCaseOrPhoneContainingOrCccdContaining(
                 search, search, search, search);
         } else if (cardType != null && !cardType.isBlank() && !cardType.equals("all")) {
-            // Check if it's a status filter (BANNED, EXPIRED) or type filter (MONTHLY, YEARLY)
             if (cardType.equals("BANNED") || cardType.equals("EXPIRED")) {
                 try {
                     customers = customerRepository.findByCardStatus(Customer.CardStatus.valueOf(cardType));
@@ -54,7 +53,7 @@ public class CustomerService {
             customers = customerRepository.findAll();
         }
 
-        // Update statuses
+        // cập nhật trạng thái
         customers.forEach(c -> updateCardStatus(c));
 
         List<CustomerDTO> dtos = customers.stream().map(this::toDTO).collect(Collectors.toList());

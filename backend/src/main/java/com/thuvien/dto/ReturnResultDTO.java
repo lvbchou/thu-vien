@@ -7,6 +7,7 @@ public class ReturnResultDTO {
     private BigDecimal totalDeposit;
     private BigDecimal netAmount;
     public List<ReturnItemDTO> getItems() { return items; }
+    
     public void setItems(List<ReturnItemDTO> v) { this.items = v; }
     public BigDecimal getTotalFine() { return totalFine; }
     public void setTotalFine(BigDecimal v) { this.totalFine = v; }

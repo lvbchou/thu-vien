@@ -5,6 +5,7 @@ public class ActiveBorrowDTO {
     private String customerName;
     private LocalDate dueDate;
     private boolean overdue;
+    
     public String getBookTitle() { return bookTitle; }
     public void setBookTitle(String v) { this.bookTitle = v; }
     public String getCustomerName() { return customerName; }

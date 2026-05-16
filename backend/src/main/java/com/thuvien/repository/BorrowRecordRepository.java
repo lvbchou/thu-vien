@@ -10,18 +10,20 @@ import java.util.List;
 public interface BorrowRecordRepository extends JpaRepository<BorrowRecord, Long> {
     List<BorrowRecord> findByCustomerId(String customerId);
     List<BorrowRecord> findByBookId(String bookId);
-
+    // dùng để check xem khách hàng có đang mượn sách nào không, nếu có thì không cho xóa KH
     List<BorrowRecord> findByCustomerIdAndStatus(String customerId, BorrowRecord.BorrowStatus status);
-
+    
     @Query("SELECT COUNT(r) FROM BorrowRecord r WHERE r.customer.id = :customerId AND r.status = 'BORROWING'")
     long countActiveBorrowsByCustomer(@Param("customerId") String customerId);
 
     @Query("SELECT r FROM BorrowRecord r WHERE r.status = 'BORROWING' AND r.dueDate < :today")
     List<BorrowRecord> findOverdueRecords(@Param("today") LocalDate today);
-
+    
+    // dùng để thống kê tổng số sách đang được mượn
     @Query("SELECT COUNT(r) FROM BorrowRecord r WHERE r.status = 'BORROWING'")
     long countTotalActiveBorrows();
 
+    // dùng để thống kê số sách mượn theo ngày, tháng, năm
     @Query("SELECT r FROM BorrowRecord r WHERE r.book.id = :bookId AND r.borrowDate BETWEEN :from AND :to")
     List<BorrowRecord> findByBookAndDateRange(@Param("bookId") String bookId,
                                               @Param("from") LocalDate from,

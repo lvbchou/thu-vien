@@ -17,6 +17,7 @@ public class BookDTO {
     private String imageUrl;
     private int totalBorrows;
     private LocalDate lastReturnDate;
+    
     public String getId() { return id; }
     public void setId(String v) { this.id = v; }
     public String getTitle() { return title; }
