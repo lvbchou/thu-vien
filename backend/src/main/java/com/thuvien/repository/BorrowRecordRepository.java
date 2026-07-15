@@ -18,6 +18,11 @@ public interface BorrowRecordRepository extends JpaRepository<BorrowRecord, Long
 
     @Query("SELECT r FROM BorrowRecord r WHERE r.status = 'BORROWING' AND r.dueDate < :today")
     List<BorrowRecord> findOverdueRecords(@Param("today") LocalDate today);
+
+    // dùng để cấm khách hàng quá hạn: dựa vào returnDate IS NULL (chưa trả) thay vì status,
+    // vì status có thể đã bị đánh dấu OVERDUE dù sách chưa được trả
+    @Query("SELECT r FROM BorrowRecord r WHERE r.returnDate IS NULL AND r.dueDate < :cutoff")
+    List<BorrowRecord> findUnreturnedOverdueBefore(@Param("cutoff") LocalDate cutoff);
     
     // dùng để thống kê tổng số sách đang được mượn
     @Query("SELECT COUNT(r) FROM BorrowRecord r WHERE r.status = 'BORROWING'")

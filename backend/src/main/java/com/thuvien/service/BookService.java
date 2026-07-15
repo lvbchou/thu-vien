@@ -94,12 +94,24 @@ public class BookService {
     // xoá
     @Transactional
     public void deleteBook(String id) {
+        Book book = bookRepository.findById(id).orElseThrow(() -> new RuntimeException("Book not found"));
+        if (book.getStatus() == Book.BookStatus.BORROWED) {
+            throw new RuntimeException("Không thể xoá sách \"" + book.getTitle() + "\" vì đang ở trạng thái Đã mượn");
+        }
         bookRepository.deleteById(id);
     }
 
     // xoá nhiều
     @Transactional
     public void deleteBooks(List<String> ids) {
+        List<Book> books = bookRepository.findAllById(ids);
+        List<String> borrowedTitles = books.stream()
+                .filter(b -> b.getStatus() == Book.BookStatus.BORROWED)
+                .map(Book::getTitle)
+                .collect(Collectors.toList());
+        if (!borrowedTitles.isEmpty()) {
+            throw new RuntimeException("Không thể xoá vì các sách sau đang ở trạng thái Đã mượn: " + String.join(", ", borrowedTitles));
+        }
         bookRepository.deleteAllById(ids);
     }
 

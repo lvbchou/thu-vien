@@ -317,6 +317,19 @@ public class CustomerService {
                 .collect(Collectors.toList());
     }
 
+    // job chạy hàng ngày: cấm khách hàng có phiếu mượn quá hạn quá 3 ngày mà chưa trả sách
+    @Transactional
+    public void banOverdueCustomers() {
+        List<BorrowRecord> overdue = borrowRecordRepository.findUnreturnedOverdueBefore(LocalDate.now().minusDays(3));
+        for (BorrowRecord record : overdue) {
+            Customer customer = record.getCustomer();
+            if (customer.getCardStatus() != Customer.CardStatus.BANNED) {
+                customer.setCardStatus(Customer.CardStatus.BANNED);
+                customerRepository.save(customer);
+            }
+        }
+    }
+
     private void updateCardStatus(Customer customer) {
         if (customer.getCardStatus() == Customer.CardStatus.BANNED) return;
         if (customer.getCardExpireDate() != null && customer.getCardExpireDate().isBefore(LocalDate.now())) {

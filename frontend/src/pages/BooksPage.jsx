@@ -1,11 +1,13 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Pencil, Trash2, ArrowUpDown } from 'lucide-react';
+import { Plus, Pencil, Trash2, ArrowUpDown, ChevronLeft, ChevronRight } from 'lucide-react';
 import api from '../utils/api';
 import { formatCurrency, formatDate, getBookStatusLabel, getBookStatusClass } from '../utils/helpers';
 import { useToast } from '../context/ToastContext';
 import BookFormModal from '../components/books/BookFormModal';
 import ConfirmDialog from '../components/common/ConfirmDialog';
+
+const PAGE_SIZE = 10;
 
 export default function BooksPage() {
   const [books, setBooks] = useState([]);
@@ -19,6 +21,7 @@ export default function BooksPage() {
   const [editBook, setEditBook] = useState(null);
   const [confirmDelete, setConfirmDelete] = useState(null);
   const [confirmBulk, setConfirmBulk] = useState(false);
+  const [page, setPage] = useState(1);
   const toast = useToast();
   const navigate = useNavigate();
 
@@ -41,7 +44,15 @@ export default function BooksPage() {
 
   useEffect(() => { load(); }, [load]);
 
-  const handleSelectAll = (e) => setSelected(e.target.checked ? books.map(b => b.id) : []);
+  useEffect(() => { setPage(1); setSelected([]); }, [search, genre, sort, priceFilter]);
+
+  const totalPages = Math.max(1, Math.ceil(books.length / PAGE_SIZE));
+  useEffect(() => { if (page > totalPages) setPage(totalPages); }, [page, totalPages]);
+
+  const paginated = books.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const selectablePaginated = paginated.filter(b => b.status !== 'BORROWED');
+
+  const handleSelectAll = (e) => setSelected(e.target.checked ? selectablePaginated.map(b => b.id) : []);
   const toggleSelect = (id) => setSelected(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
 
   const handleSave = async (data) => {
@@ -64,7 +75,9 @@ export default function BooksPage() {
       await api.delete(`/books/${id}`);
       toast('Xoá sách thành công', 'success');
       setConfirmDelete(null); load();
-    } catch { toast('Xoá thất bại', 'error'); }
+    } catch (e) {
+      toast(e.response?.data?.message || 'Xoá thất bại', 'error');
+    }
   };
 
   const handleBulkDelete = async () => {
@@ -72,7 +85,9 @@ export default function BooksPage() {
       await api.delete('/books/batch', { data: { ids: selected } });
       toast(`Đã xoá ${selected.length} sách`, 'success');
       setSelected([]); setConfirmBulk(false); load();
-    } catch { toast('Xoá thất bại', 'error'); }
+    } catch (e) {
+      toast(e.response?.data?.message || 'Xoá thất bại', 'error');
+    }
   };
 
   const toggleSort = () => {
@@ -114,7 +129,11 @@ export default function BooksPage() {
         <table>
           <thead>
             <tr>
-              <th style={{width:40}}><input type="checkbox" checked={selected.length === books.length && books.length > 0} onChange={handleSelectAll} /></th>
+              <th style={{width:40}}>
+                <input type="checkbox"
+                  checked={selectablePaginated.length > 0 && selectablePaginated.every(b => selected.includes(b.id))}
+                  onChange={handleSelectAll} />
+              </th>
               <th>Mã</th>
               <th>Tên sách</th>
               <th>Tác giả</th>
@@ -135,37 +154,62 @@ export default function BooksPage() {
             </tr>
           </thead>
           <tbody>
-            {books.length === 0 && (
+            {paginated.length === 0 && (
               <tr><td colSpan={14} className="text-center" style={{padding:40,color:'var(--text-muted)'}}>Không có dữ liệu</td></tr>
             )}
-            {books.map(b => (
-              <tr key={b.id}>
-                <td><input type="checkbox" checked={selected.includes(b.id)} onChange={() => toggleSelect(b.id)} /></td>
-                <td className="td-bold" style={{color:'var(--text-secondary)'}}>{b.id}</td>
-                <td>
-                  <span className="td-link" onClick={() => navigate(`/books/${b.id}`)}>{b.title}</span>
-                </td>
-                <td>{b.author}</td>
-                <td>{b.publisher}</td>
-                <td>{b.genre}</td>
-                <td>{formatCurrency(b.price)}</td>
-                <td>{b.shelf}</td>
-                <td>{formatDate(b.importDate)}</td>
-                <td style={{maxWidth:140, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap'}}>{b.externalCondition}</td>
-                <td><span className={`badge ${getBookStatusClass(b.status)}`}>{getBookStatusLabel(b.status)}</span></td>
-                <td>{b.totalBorrows}</td>
-                <td className="td-muted">{formatDate(b.lastReturnDate)}</td>
-                <td>
-                  <div className="action-btns">
-                    <button className="btn-icon primary" onClick={() => { setEditBook(b); setShowForm(true); }}><Pencil size={15} /></button>
-                    <button className="btn-icon danger" onClick={() => setConfirmDelete(b)}><Trash2 size={15} /></button>
-                  </div>
-                </td>
-              </tr>
-            ))}
+            {paginated.map(b => {
+              const isBorrowed = b.status === 'BORROWED';
+              return (
+                <tr key={b.id}>
+                  <td>
+                    <input type="checkbox" checked={selected.includes(b.id)} disabled={isBorrowed}
+                      onChange={() => toggleSelect(b.id)} />
+                  </td>
+                  <td className="td-bold" style={{color:'var(--text-secondary)'}}>{b.id}</td>
+                  <td>
+                    <span className="td-link" onClick={() => navigate(`/books/${b.id}`)}>{b.title}</span>
+                  </td>
+                  <td>{b.author}</td>
+                  <td>{b.publisher}</td>
+                  <td>{b.genre}</td>
+                  <td>{formatCurrency(b.price)}</td>
+                  <td>{b.shelf}</td>
+                  <td>{formatDate(b.importDate)}</td>
+                  <td style={{maxWidth:140, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap'}}>{b.externalCondition}</td>
+                  <td><span className={`badge ${getBookStatusClass(b.status)}`}>{getBookStatusLabel(b.status)}</span></td>
+                  <td>{b.totalBorrows}</td>
+                  <td className="td-muted">{formatDate(b.lastReturnDate)}</td>
+                  <td>
+                    <div className="action-btns">
+                      <button className="btn-icon primary" onClick={() => { setEditBook(b); setShowForm(true); }}><Pencil size={15} /></button>
+                      <button className="btn-icon danger" disabled={isBorrowed}
+                        title={isBorrowed ? 'Không thể xoá sách đang ở trạng thái Đã mượn' : undefined}
+                        onClick={() => setConfirmDelete(b)}><Trash2 size={15} /></button>
+                    </div>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
+
+      {books.length > 0 && (
+        <div className="pagination">
+          <span className="pagination-info">
+            Hiển thị {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, books.length)} trong tổng số {books.length} sách
+          </span>
+          <div className="pagination-controls">
+            <button className="btn-icon" disabled={page === 1} onClick={() => setPage(p => p - 1)}>
+              <ChevronLeft size={16} />
+            </button>
+            <span className="pagination-page">Trang {page} / {totalPages}</span>
+            <button className="btn-icon" disabled={page === totalPages} onClick={() => setPage(p => p + 1)}>
+              <ChevronRight size={16} />
+            </button>
+          </div>
+        </div>
+      )}
 
       {showForm && (
         <BookFormModal

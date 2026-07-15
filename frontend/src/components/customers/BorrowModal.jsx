@@ -9,6 +9,11 @@ function addDays(n) {
   return d.toISOString().split('T')[0];
 }
 
+function getDeposit(book) {
+  const rate = new Date(book.purchaseDate) > new Date(Date.now() - 2 * 365 * 86400000) ? 0.5 : 0.3;
+  return book.price * rate;
+}
+
 export default function BorrowModal({ customer, onDone, onClose }) {
   const [items, setItems] = useState([{ bookQuery: '', bookData: null, days: 14, suggestions: [], showDropdown: false }]);
   const timers = useRef({});
@@ -61,6 +66,7 @@ export default function BorrowModal({ customer, onDone, onClose }) {
   };
 
   const maxCanBorrow = 5 - (customer.currentBorrowing || 0);
+  const totalDeposit = items.reduce((sum, x) => sum + (x.bookData ? getDeposit(x.bookData) : 0), 0);
 
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -110,8 +116,8 @@ export default function BorrowModal({ customer, onDone, onClose }) {
 
               {item.bookData && (
                 <div style={{fontSize:12.5, color:'var(--text-secondary)', marginBottom:8}}>
-                  Giá: {formatCurrency(item.bookData.price)} · 
-                  Cọc: {formatCurrency(item.bookData.price * (new Date(item.bookData.purchaseDate) > new Date(Date.now() - 2*365*86400000) ? 0.5 : 0.3))}
+                  Giá: {formatCurrency(item.bookData.price)} ·
+                  Cọc: {formatCurrency(getDeposit(item.bookData))}
                 </div>
               )}
 
@@ -129,6 +135,11 @@ export default function BorrowModal({ customer, onDone, onClose }) {
               <Plus size={14} /> Thêm sách mượn
             </button>
           )}
+
+          <div style={{marginTop:16, paddingTop:12, borderTop:'1px solid var(--border)', display:'flex', justifyContent:'space-between', fontSize:14, fontWeight:600}}>
+            <span>Tổng tiền cọc</span>
+            <span>{formatCurrency(totalDeposit)}</span>
+          </div>
         </div>
         <div className="modal-footer">
           <button className="btn btn-secondary" onClick={onClose}>Huỷ</button>

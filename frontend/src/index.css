@@ -480,6 +480,32 @@ tbody td {
 .btn-icon:hover { background: var(--bg); color: var(--text); }
 .btn-icon.danger:hover { background: var(--danger-bg); color: var(--danger); }
 .btn-icon.primary:hover { background: var(--primary-light); color: var(--primary); }
+.btn-icon:disabled { opacity: 0.35; cursor: not-allowed; }
+.btn-icon:disabled:hover { background: none; color: var(--text-secondary); }
+
+/* ===== PAGINATION ===== */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 4px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pagination-page {
+  font-size: 13px;
+  color: var(--text);
+  font-weight: 500;
+  min-width: 80px;
+  text-align: center;
+}
 
 /* ===== BUTTONS ===== */
 .btn {
