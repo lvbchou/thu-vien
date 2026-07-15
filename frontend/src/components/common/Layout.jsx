@@ -10,7 +10,7 @@ export default function Layout({ children }) {
   const navigate = useNavigate();
 
   const navItems = [
-    { path: '/', label: 'Dashboard', icon: LayoutDashboard },
+    { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { path: '/books', label: 'Sách', icon: Book },
     { path: '/customers', label: 'Khách hàng', icon: Users },
   ];

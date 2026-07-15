@@ -1,4 +1,5 @@
 package com.thuvien.service;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.thuvien.dto.DashboardDTO;
@@ -20,6 +21,7 @@ public class DashboardService {
     @Autowired
     private BorrowRecordRepository borrowRecordRepository;
 
+    // thống kê dashboard
     @Transactional(readOnly = true)
     public DashboardDTO getDashboard() {
         DashboardDTO dto = new DashboardDTO();

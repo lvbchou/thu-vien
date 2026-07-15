@@ -52,7 +52,7 @@ public class BookService {
         }
         return dtos;
     }
-    
+
     public BookDTO getBookById(String id) {
         Book book = bookRepository.findById(id).orElseThrow(() -> new RuntimeException("Book not found"));
         return toDTO(book);
@@ -62,13 +62,14 @@ public class BookService {
         return bookRepository.findAllGenres();
     }
 
+    // thêm mới
     @Transactional
     public BookDTO createBook(BookRequest req) {
         String newId = generateBookId();
         Book book = new Book();
         book.setId(newId);
         mapToBook(book, req);
-        book.setId(newId);  
+        book.setId(newId);
         return toDTO(bookRepository.save(book));
     }
 
@@ -82,6 +83,7 @@ public class BookService {
         return String.format("S%03d", max + 1);
     }
 
+    // sửa
     @Transactional
     public BookDTO updateBook(String id, BookRequest req) {
         Book book = bookRepository.findById(id).orElseThrow(() -> new RuntimeException("Book not found"));
@@ -89,11 +91,13 @@ public class BookService {
         return toDTO(bookRepository.save(book));
     }
 
+    // xoá
     @Transactional
     public void deleteBook(String id) {
         bookRepository.deleteById(id);
     }
 
+    // xoá nhiều
     @Transactional
     public void deleteBooks(List<String> ids) {
         bookRepository.deleteAllById(ids);

@@ -77,6 +77,7 @@ public class CustomerService {
         return dtos;
     }
 
+    // xem chi tiết
     @Transactional(readOnly = true)
     public CustomerDTO getCustomerById(String id) {
         Customer customer = customerRepository.findById(id).orElseThrow(() -> new RuntimeException("Customer not found"));
@@ -84,6 +85,7 @@ public class CustomerService {
         return toDTO(customer);
     }
 
+    // thêm mới
     @Transactional
     public CustomerDTO createCustomer(CustomerRequest req) {
         String newId = generateCustomerId();
@@ -105,6 +107,7 @@ public class CustomerService {
         return String.format("KH%03d", max + 1);
     }
 
+    // sửa
     @Transactional
     public CustomerDTO updateCustomer(String id, CustomerRequest req) {
         Customer customer = customerRepository.findById(id).orElseThrow(() -> new RuntimeException("Customer not found"));
@@ -112,11 +115,13 @@ public class CustomerService {
         return toDTO(customerRepository.save(customer));
     }
 
+    // xoá
     @Transactional
     public void deleteCustomer(String id) {
         customerRepository.deleteById(id);
     }
 
+    // quản lý thẻ và trạng thái tài khoản: gia hạn thẻ, khóa/mở khóa tài khoản
     @Transactional
     public CustomerDTO renewCard(String id, String cardType) {
         Customer customer = customerRepository.findById(id).orElseThrow(() -> new RuntimeException("Customer not found"));
@@ -134,6 +139,7 @@ public class CustomerService {
         return toDTO(customerRepository.save(customer));
     }
 
+    // khóa tài khoản
     @Transactional
     public CustomerDTO banCustomer(String id) {
         Customer customer = customerRepository.findById(id).orElseThrow(() -> new RuntimeException("Customer not found"));
@@ -141,10 +147,10 @@ public class CustomerService {
         return toDTO(customerRepository.save(customer));
     }
 
+    // mở khóa tài khoản
     @Transactional
     public CustomerDTO unbanCustomer(String id) {
         Customer customer = customerRepository.findById(id).orElseThrow(() -> new RuntimeException("Customer not found"));
-        // Restore to ACTIVE or EXPIRED based on card expiry date
         if (customer.getCardExpireDate() != null && customer.getCardExpireDate().isBefore(java.time.LocalDate.now())) {
             customer.setCardStatus(Customer.CardStatus.EXPIRED);
         } else {
@@ -153,11 +159,12 @@ public class CustomerService {
         return toDTO(customerRepository.save(customer));
     }
 
+    //thêm phiếu mượn
     @Transactional
     public BorrowResultDTO addBorrowRecords(String customerId, List<BorrowItemRequest> items) {
         Customer customer = customerRepository.findById(customerId).orElseThrow(() -> new RuntimeException("Customer not found"));
 
-        // Check card status
+        //check status
         updateCardStatus(customer);
         if (customer.getCardStatus() == Customer.CardStatus.BANNED) throw new RuntimeException("Khách hàng bị cấm mượn sách");
         if (customer.getCardStatus() == Customer.CardStatus.EXPIRED) throw new RuntimeException("Thẻ khách hàng đã hết hạn");
@@ -178,7 +185,7 @@ public class CustomerService {
             record.setBorrowDate(LocalDate.now());
             record.setDueDate(LocalDate.now().plusDays(item.getDays()));
 
-            // Calculate deposit: 50% if within 2 years, 30% if older
+            // tính tiền cọc
             LocalDate twoYearsAgo = LocalDate.now().minusYears(2);
             BigDecimal depositRate = (book.getPurchaseDate() != null && book.getPurchaseDate().isAfter(twoYearsAgo))
                     ? new BigDecimal("0.5") : new BigDecimal("0.3");
@@ -197,6 +204,7 @@ public class CustomerService {
         return result;
     }
 
+    //trả sách
     @Transactional
     public ReturnResultDTO returnBooks(String customerId, List<Long> recordIds) {
         Customer customer = customerRepository.findById(customerId).orElseThrow(() -> new RuntimeException("Customer not found"));
@@ -215,11 +223,11 @@ public class CustomerService {
             record.setReturnDate(today);
             record.setStatus(overdueDays > 0 ? BorrowRecord.BorrowStatus.OVERDUE : BorrowRecord.BorrowStatus.RETURNED);
 
-            // Calculate fine
+            // tính tiền phạt
             BigDecimal fine = calculateFine(book, overdueDays);
             record.setFine(fine);
 
-            // Auto ban if overdue > 3 days
+            // cấm
             if (overdueDays > 3) {
                 customer.setCardStatus(Customer.CardStatus.BANNED);
             }
@@ -271,6 +279,7 @@ public class CustomerService {
         }
     }
 
+    // gia hạn mượn
     @Transactional
     public void extendBorrow(Long recordId, int additionalDays) {
         BorrowRecord record = borrowRecordRepository.findById(recordId).orElseThrow();
